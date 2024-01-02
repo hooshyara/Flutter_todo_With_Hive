@@ -5,7 +5,6 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:todo_list/data.dart';
 import 'edit.dart';
 
-
 const taskBoxName = 'tasks';
 
 void main() async {
@@ -18,6 +17,9 @@ void main() async {
 
 const Color primaryColor = Color(0xff794cff);
 final secondaryTextColor = Color(0xffAFBED0);
+final normalPriority = Color(0xffF09816);
+final lowPriority = Color(0xff3BE1F1);
+final highPriority = primaryColor;
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -63,7 +65,9 @@ class HomeScreen extends StatelessWidget {
         onPressed: () {
           Navigator.of(context).push(
             CupertinoPageRoute(
-              builder: (context) => EditTaskScreen(task: Task(),),
+              builder: (context) => EditTaskScreen(
+                task: Task(),
+              ),
             ),
           );
         },
@@ -100,7 +104,6 @@ class HomeScreen extends StatelessWidget {
                       height: 12,
                     ),
                     Container(
-
                       height: 38,
                       width: double.infinity,
                       decoration: BoxDecoration(
@@ -114,8 +117,9 @@ class HomeScreen extends StatelessWidget {
                           ]),
                       child: TextField(
                         decoration: InputDecoration(
-                            prefixIcon: Icon(CupertinoIcons.search),
-                            label: Text('Search tasks  ...'),),
+                          prefixIcon: Icon(CupertinoIcons.search),
+                          label: Text('Search tasks  ...'),
+                        ),
                       ),
                     ),
                   ],
@@ -150,7 +154,6 @@ class HomeScreen extends StatelessWidget {
                                     height: 3,
                                     width: 70,
                                     margin: const EdgeInsets.only(top: 4),
-
                                     decoration: BoxDecoration(
                                       color: themData.colorScheme.primary,
                                       borderRadius: BorderRadius.circular(1.5),
@@ -213,6 +216,18 @@ class _TaskItemState extends State<TaskItem> {
   @override
   Widget build(BuildContext context) {
     ThemeData themeData = Theme.of(context);
+    final priorityColor;
+    switch (widget.task.priority) {
+      case Priority.normal:
+        priorityColor = normalPriority;
+        break;
+      case Priority.low:
+        priorityColor = lowPriority;
+        break;
+      case Priority.high:
+        priorityColor = highPriority;
+        break;
+    }
     return InkWell(
       onTap: () {
         setState(() {
@@ -239,9 +254,7 @@ class _TaskItemState extends State<TaskItem> {
                 width: 16,
               ),
               Expanded(
-
                 child: Text(
-
                   widget.task.name,
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
@@ -252,6 +265,16 @@ class _TaskItemState extends State<TaskItem> {
                         : TextDecoration.none,
                   ),
                 ),
+              ),
+              Container(
+                width: 4,
+                height: 90,
+                decoration: BoxDecoration(
+                    color: priorityColor,
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(8),
+                      bottomRight: Radius.circular(8),
+                    )),
               ),
             ],
           ),
@@ -278,9 +301,8 @@ class MyCheckBox extends StatelessWidget {
         width: 24,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
-          border: !value
-              ? Border.all(color: secondaryTextColor, width: 2)
-              : null,
+          border:
+              !value ? Border.all(color: secondaryTextColor, width: 2) : null,
           color: value ? primaryColor : null,
         ),
         child: value
@@ -294,4 +316,3 @@ class MyCheckBox extends StatelessWidget {
     );
   }
 }
-

@@ -38,7 +38,7 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
         onPressed: () {
           final task = Task();
           task.name = _controller.text;
-          task.priority = Priority.low;
+          task.priority = widget.task.priority;
           if (task.isInBox) {
             task.save();
           } else {
@@ -198,10 +198,10 @@ class _PriorityCheckBoxShape extends StatelessWidget {
         ),
         child: value
             ? Icon(
-                CupertinoIcons.check_mark,
-                color: Theme.of(context).colorScheme.surface,
-                size: 12,
-              )
+          CupertinoIcons.check_mark,
+          color: Theme.of(context).colorScheme.surface,
+          size: 12,
+        )
             : null,
       ),
     );
