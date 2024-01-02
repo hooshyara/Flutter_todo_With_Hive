@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:todo_list/data.dart';
+import 'edit.dart';
+
 
 const taskBoxName = 'tasks';
 
@@ -61,7 +63,7 @@ class HomeScreen extends StatelessWidget {
         onPressed: () {
           Navigator.of(context).push(
             CupertinoPageRoute(
-              builder: (context) => EditTaskScreen(),
+              builder: (context) => EditTaskScreen(task: Task(),),
             ),
           );
         },
@@ -71,7 +73,7 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           children: [
             Container(
-              height: 102,
+              height: 110,
               decoration: BoxDecoration(
                 color: themData.colorScheme.primaryContainer,
               ),
@@ -98,6 +100,7 @@ class HomeScreen extends StatelessWidget {
                       height: 12,
                     ),
                     Container(
+
                       height: 38,
                       width: double.infinity,
                       decoration: BoxDecoration(
@@ -112,7 +115,7 @@ class HomeScreen extends StatelessWidget {
                       child: TextField(
                         decoration: InputDecoration(
                             prefixIcon: Icon(CupertinoIcons.search),
-                            label: Text('Search tasks  ...')),
+                            label: Text('Search tasks  ...'),),
                       ),
                     ),
                   ],
@@ -146,6 +149,8 @@ class HomeScreen extends StatelessWidget {
                                   Container(
                                     height: 3,
                                     width: 70,
+                                    margin: const EdgeInsets.only(top: 4),
+
                                     decoration: BoxDecoration(
                                       color: themData.colorScheme.primary,
                                       borderRadius: BorderRadius.circular(1.5),
@@ -256,7 +261,7 @@ class _TaskItemState extends State<TaskItem> {
   }
 }
 
-class MyCheckBox extends StatefulWidget {
+class MyCheckBox extends StatelessWidget {
   final bool value;
 
   const MyCheckBox({
@@ -264,11 +269,6 @@ class MyCheckBox extends StatefulWidget {
     required this.value,
   });
 
-  @override
-  State<MyCheckBox> createState() => _MyCheckBoxState();
-}
-
-class _MyCheckBoxState extends State<MyCheckBox> {
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -278,12 +278,12 @@ class _MyCheckBoxState extends State<MyCheckBox> {
         width: 24,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
-          border: !widget.value
+          border: !value
               ? Border.all(color: secondaryTextColor, width: 2)
               : null,
-          color: widget.value ? primaryColor : null,
+          color: value ? primaryColor : null,
         ),
-        child: widget.value
+        child: value
             ? Icon(
                 CupertinoIcons.check_mark,
                 color: Theme.of(context).colorScheme.surface,
@@ -295,43 +295,3 @@ class _MyCheckBoxState extends State<MyCheckBox> {
   }
 }
 
-class EditTaskScreen extends StatelessWidget {
-  TextEditingController _controller = TextEditingController();
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Edit Task',
-        ),
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          final task = Task();
-          task.name = _controller.text;
-          task.priority = Priority.low;
-          if (task.isInBox) {
-            task.save();
-          } else {
-            final Box<Task> box = Hive.box(taskBoxName);
-            box.add(task);
-          }
-          Navigator.of(context).pop();
-        },
-        label: Text(
-          'Save Change',
-        ),
-      ),
-      body: Column(
-        children: [
-          TextField(
-            controller: _controller,
-            decoration:
-                InputDecoration(label: Text("Add a Task for today ...")),
-          )
-        ],
-      ),
-    );
-  }
-}
