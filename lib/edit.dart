@@ -114,6 +114,9 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
                 ),
               ],
             ),
+            const SizedBox(
+              height: 12,
+            ),
             TextField(
               controller: _controller,
               decoration: InputDecoration(

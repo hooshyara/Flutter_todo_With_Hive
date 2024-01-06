@@ -29,7 +29,6 @@ class MyApp extends StatelessWidget {
     final primaryTextColor = Color(0xff1D2830);
     return MaterialApp(
       theme: ThemeData(
-
         textTheme: GoogleFonts.poppinsTextTheme(
             TextTheme(headline6: TextStyle(fontWeight: FontWeight.bold))),
         inputDecorationTheme: InputDecorationTheme(
@@ -45,9 +44,7 @@ class MyApp extends StatelessWidget {
           secondary: primaryColor,
           onSecondary: Colors.white,
         ),
-        snackBarTheme: SnackBarThemeData(
-          backgroundColor: primaryColor
-        ),
+        snackBarTheme: SnackBarThemeData(backgroundColor: primaryColor),
       ),
       home: HomeScreen(),
       debugShowCheckedModeBanner: false,
@@ -59,6 +56,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final box = Hive.box<Task>(taskBoxName);
+
     final themData = Theme.of(context);
     return Scaffold(
       // appBar: AppBar(
@@ -75,7 +73,15 @@ class HomeScreen extends StatelessWidget {
             ),
           );
         },
-        label: Text('Add a New Task'),
+        label: Row(
+          children: [
+            Text('Add a New Task'),
+            const SizedBox(
+              width: 8,
+            ),
+            Icon(CupertinoIcons.add)
+          ],
+        ),
       ),
       body: SafeArea(
         child: Column(
@@ -134,7 +140,7 @@ class HomeScreen extends StatelessWidget {
               child: ValueListenableBuilder<Box<Task>>(
                 valueListenable: box.listenable(),
                 builder: (context, value, child) {
-                  if(box.isNotEmpty){
+                  if (box.isNotEmpty) {
                     return Padding(
                       padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
                       child: ListView.builder(
@@ -161,7 +167,8 @@ class HomeScreen extends StatelessWidget {
                                       margin: const EdgeInsets.only(top: 4),
                                       decoration: BoxDecoration(
                                         color: themData.colorScheme.primary,
-                                        borderRadius: BorderRadius.circular(1.5),
+                                        borderRadius:
+                                            BorderRadius.circular(1.5),
                                       ),
                                     ),
                                   ],
@@ -171,6 +178,10 @@ class HomeScreen extends StatelessWidget {
                                   textColor: secondaryTextColor,
                                   onPressed: () {
                                     box.clear();
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(SnackBar(
+                                      content: Text('All task is Deleted'),
+                                    ));
                                   },
                                   elevation: 0,
                                   child: Row(
@@ -197,9 +208,8 @@ class HomeScreen extends StatelessWidget {
                         },
                       ),
                     );
-                  }else{
+                  } else {
                     return EmptyState();
-
                   }
                 },
               ),
@@ -210,31 +220,31 @@ class HomeScreen extends StatelessWidget {
     );
   }
 }
-class SnakBar extends StatelessWidget{
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    return Column();
-  }
-  
-}
-class EmptyState extends StatelessWidget{
+
+class EmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-
-        Image.asset( 'assets/emptyState.jpg' ,),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(32),
+          child: Image.asset(
+            'assets/emptyState.jpg',
+          ),
+        ),
         const SizedBox(
           height: 10,
         ),
-        Text('your Task List is Empty !!!', style: Theme.of(context).textTheme.headline6,)
+        Text(
+          'your Task List is Empty !!!',
+          style: Theme.of(context).textTheme.headline6,
+        )
       ],
     );
   }
-  
 }
+
 class TaskItem extends StatefulWidget {
   const TaskItem({
     super.key,
@@ -248,7 +258,6 @@ class TaskItem extends StatefulWidget {
 }
 
 class _TaskItemState extends State<TaskItem> {
-
   @override
   Widget build(BuildContext context) {
     ThemeData themeData = Theme.of(context);
@@ -278,14 +287,9 @@ class _TaskItemState extends State<TaskItem> {
       },
       onLongPress: () {
         widget.task.delete();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Task ${widget.task.name} is Deleted'), )
-          
-        );
-
-
-
-
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Task ${widget.task.name} is Deleted'),
+        ));
       },
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -302,11 +306,14 @@ class _TaskItemState extends State<TaskItem> {
               ]),
           child: Row(
             children: [
-              MyCheckBox(value: widget.task.isCompleted, onTap: () {
-                setState(() {
-                  widget.task.isCompleted = !widget.task.isCompleted;
-                });
-              },),
+              MyCheckBox(
+                value: widget.task.isCompleted,
+                onTap: () {
+                  setState(() {
+                    widget.task.isCompleted = !widget.task.isCompleted;
+                  });
+                },
+              ),
               const SizedBox(
                 width: 16,
               ),
@@ -344,9 +351,11 @@ class _TaskItemState extends State<TaskItem> {
 class MyCheckBox extends StatelessWidget {
   final bool value;
   final GestureTapCallback onTap;
+
   const MyCheckBox({
     super.key,
-    required this.value, required this.onTap,
+    required this.value,
+    required this.onTap,
   });
 
   @override
