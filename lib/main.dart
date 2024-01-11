@@ -52,7 +52,14 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final TextEditingController controller=TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     final box = Hive.box<Task>(taskBoxName);
@@ -126,6 +133,13 @@ class HomeScreen extends StatelessWidget {
                             ),
                           ]),
                       child: TextField(
+                        onChanged: (value) {
+                          setState(() {
+
+
+                          });
+                        },
+                        controller: controller,
                         decoration: InputDecoration(
                           prefixIcon: Icon(CupertinoIcons.search),
                           label: Text('Search tasks  ...'),
@@ -140,11 +154,18 @@ class HomeScreen extends StatelessWidget {
               child: ValueListenableBuilder<Box<Task>>(
                 valueListenable: box.listenable(),
                 builder: (context, value, child) {
+                  final items;
+                  if(controller.text.isEmpty){
+                    items=box.values.toList();
+                    EmptyState();
+                  }else{
+                    items=box.values.where((task) => task.name.contains(controller.text),).toList();
+                  }
                   if (box.isNotEmpty) {
                     return Padding(
                       padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
                       child: ListView.builder(
-                        itemCount: box.values.length + 1,
+                        itemCount: items.length + 1,
                         itemBuilder: (context, index) {
                           if (index == 0) {
                             return Row(
@@ -181,7 +202,7 @@ class HomeScreen extends StatelessWidget {
                                     ScaffoldMessenger.of(context)
                                         .showSnackBar(SnackBar(
                                       content: Text('All task is Deleted'),
-                                    ));
+                                    ),);
                                   },
                                   elevation: 0,
                                   child: Row(
@@ -202,7 +223,7 @@ class HomeScreen extends StatelessWidget {
                               ],
                             );
                           } else {
-                            final Task task = box.values.toList()[index - 1];
+                            final Task task = items[index - 1];
                             return TaskItem(task: task);
                           }
                         },
